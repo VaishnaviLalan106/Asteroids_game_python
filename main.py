@@ -94,6 +94,11 @@ def update(dt):
         ship_speed = 100
         ship_speed_x += math.cos(ship_angle) * ship_speed * dt
         ship_speed_y += math.sin(ship_angle) * ship_speed * dt
+    if keyboard.down:
+        ship_speed = 100
+        ship_speed_x -= math.cos(ship_angle) * ship_speed * dt
+        ship_speed_y -= math.sin(ship_angle) * ship_speed * dt
+
 
     ship_x += ship_speed_x * dt
     ship_y += ship_speed_y * dt
