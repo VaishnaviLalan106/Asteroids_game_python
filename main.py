@@ -8,6 +8,7 @@ ship_radius = 30
 
 bullet_timer_limit = 0.5
 bullet_radius = 5
+bullets = []
 
 asteroid_stages = [
     {
@@ -68,6 +69,9 @@ def reset():
 
 reset()
 
+def are_circles_intersecting(a_x, a_y, a_radius, b_x, b_y, b_radius):
+    return (a_x - b_x)**2 + (a_y - b_y)**2 <= (a_radius + b_radius)**2
+
 def update(dt):
     global ship_x
     global ship_y
@@ -94,11 +98,14 @@ def update(dt):
     ship_x += ship_speed_x * dt
     ship_y += ship_speed_y * dt
 
+    friction = 0.99
+    ship_speed_x *= friction
+    ship_speed_y *= friction
+
     ship_x %= arena_width
     ship_y %= arena_height
 
-    def are_circles_intersecting(a_x, a_y, a_radius, b_x, b_y, b_radius):
-        return (a_x - b_x)**2 + (a_y - b_y)**2 <= (a_radius + b_radius)**2
+    
 
     for bullet in bullets.copy():
         bullet['time_left'] -= dt
@@ -119,7 +126,8 @@ def update(dt):
                 asteroid['x'], asteroid['y'],
                 asteroid_stages[asteroid['stage']]['radius']
             ):
-                bullets.remove(bullet)
+                if bullet in bullets:
+                    bullets.remove(bullet)
 
                 if asteroid['stage'] > 0:
                     angle1 = random.random() * (2 * math.pi)
@@ -143,7 +151,7 @@ def update(dt):
 
     bullet_timer += dt
 
-    if keyboard.S:
+    if keyboard.s:
         if bullet_timer >= bullet_timer_limit:
             bullet_timer = 0
 
@@ -206,3 +214,10 @@ def draw():
                     asteroid_stages[asteroid['stage']]['radius'],
                     color=(255, 255, 0)
                 )
+
+WIDTH = arena_width
+HEIGHT = arena_height
+TITLE = "Asteroids"
+
+import pgzrun
+pgzrun.go()
