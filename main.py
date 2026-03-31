@@ -10,6 +10,9 @@ bullet_timer_limit = 0.5
 bullet_radius = 5
 bullets = []
 
+def are_circles_intersecting(a_x, a_y, a_radius, b_x, b_y, b_radius):
+    return (a_x - b_x)**2 + (a_y - b_y)**2 <= (a_radius + b_radius)**2
+
 asteroid_stages = [
     {
         'speed': 120,
@@ -66,11 +69,16 @@ def reset():
     for asteroid in asteroids:
         asteroid['angle'] = random.random() * (2 * math.pi)
         asteroid['stage'] = len(asteroid_stages) - 1
+    while any(are_circles_intersecting(
+        ship_x, ship_y, ship_radius,
+        asteroid['x'], asteroid['y'],
+        asteroid_stages[asteroid['stage']]['radius']
+    ) for asteroid in asteroids):
+        ship_x = random.randint(0, arena_width)
+        ship_y = random.randint(0, arena_height)
 
 reset()
 
-def are_circles_intersecting(a_x, a_y, a_radius, b_x, b_y, b_radius):
-    return (a_x - b_x)**2 + (a_y - b_y)**2 <= (a_radius + b_radius)**2
 
 def update(dt):
     global ship_x
